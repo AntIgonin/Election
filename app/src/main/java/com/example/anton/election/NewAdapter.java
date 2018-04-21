@@ -71,19 +71,21 @@ public class NewAdapter extends BaseAdapter implements View.OnClickListener {
 
 
     @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
+    public View getView(final int position, View convertView, ViewGroup parent) {
 
         View view = convertView;
         if (view == null) {
             view = lInflater.inflate(R.layout.item, parent, false);
         }
 
+        final VolleyReq volleyReq = new VolleyReq(ctx);
+
         final Candidat c = getCandidat(position);
 
         final View finalView = view;
 
         ((TextView) view.findViewById(R.id.textView4)).setText(c.firstname);
-        ((TextView) view.findViewById(R.id.textView3)).setText(c.secondname );
+        ((TextView) view.findViewById(R.id.textView3)).setText(c.secondname);
         ((TextView) view.findViewById(R.id.textView8)).setText(c.thirdname);
 
 
@@ -94,6 +96,8 @@ public class NewAdapter extends BaseAdapter implements View.OnClickListener {
         ((TextView) view.findViewById(R.id.textView5)).setText("Голосов : "+c.votes);
 
         ((TextView) view.findViewById(R.id.textView6)).setText(String.valueOf(((c.totalVote)/100)*Double.valueOf(c.votes))+" % ");
+
+
 
             ImageRequest imageRequest = new ImageRequest(urlImage + c.image, new Response.Listener<Bitmap>() {
                 @Override
@@ -111,6 +115,8 @@ public class NewAdapter extends BaseAdapter implements View.OnClickListener {
                 }
             });
 
+            queue.add(imageRequest);
+
         final ImageView imageView = (ImageView) view.findViewById(R.id.imageView4);
         final ImageButton imageButton = (ImageButton) view.findViewById(R.id.imageButton);
         final TextView textView = view.findViewById(R.id.textView3);
@@ -122,7 +128,9 @@ public class NewAdapter extends BaseAdapter implements View.OnClickListener {
             else {imageView.setVisibility(View.GONE);}
         }
 
-        queue.add(imageRequest);
+        Log.d("Choise",choiseCandidat);
+
+
 
         imageButton.setOnClickListener(new View.OnClickListener() {
 
@@ -133,9 +141,9 @@ public class NewAdapter extends BaseAdapter implements View.OnClickListener {
 
                 idElections[0] = c.id;
 
-                notifyDataSetChanged();
-
                 imageView.setVisibility(View.VISIBLE);
+
+                notifyDataSetChanged();
 
                 choiseCandidat = (String) textView.getText();
 
@@ -151,6 +159,7 @@ public class NewAdapter extends BaseAdapter implements View.OnClickListener {
                             @Override
                             public void onResponse(String s) {
 
+                                volleyReq.UpdateVolley(queue,lvMain);
                             }
                         },
                         new Response.ErrorListener() {

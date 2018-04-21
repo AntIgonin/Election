@@ -13,6 +13,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.telephony.TelephonyManager;
 import android.util.Log;
 import android.view.View;
+import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -48,13 +49,16 @@ import static java.security.AccessController.getContext;
 public class General extends AppCompatActivity {
 
     private static final String TAG = General.class.getSimpleName();
-    ArrayList<Candidat> candidats = new ArrayList<Candidat>();
+   static ArrayList<Candidat> candidats = new ArrayList<Candidat>(7);
     public static final String fileName = "candidat.txt";
 
     static ListView lvMain;
 
     static TextView textView;
 
+    static NewAdapter boxAdapter;
+
+    int position = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -80,9 +84,90 @@ public class General extends AppCompatActivity {
         final RequestQueue queue = Volley.newRequestQueue(General.this);
         textView = (TextView) findViewById(R.id.textView2);
 
-        VolleyReq volleyReq = new VolleyReq(candidats,General.this);
+        for (int i = 0; i < 8; i++){
 
-        volleyReq.ReqVolley(queue,lvMain);
+            candidats.add(new Candidat());
+
+        }
+
+
+        String url = "http://adlibtech.ru/elections/api/getcandidates.php";
+        StringRequest jsObjRequest = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
+
+            @Override
+            public void onResponse(String response) {
+
+                JSONParser jsonParser = new JSONParser();
+
+                try {
+                    Object object = jsonParser.parse(response);
+
+                    JSONArray jsonArray = (JSONArray) object;
+
+                    JSONObject total = (JSONObject) jsonArray.get(8);
+
+                    String totalVote = (String) total.get("total");
+
+                    textView.setText(totalVote);
+
+
+
+                    for (int i = 0; i < 8; i++) {
+
+                        JSONObject candidat = (JSONObject) jsonArray.get(i);
+
+                        String id = (String) candidat.get("id");
+
+                        String firstname = (String) candidat.get("firstname");
+
+                        String secondname = (String) candidat.get("secondname");
+
+                        String thirdname = (String) candidat.get("thirdname");
+
+                        String image = (String) candidat.get("image");
+
+                        String descr = (String) candidat.get("description");
+
+                        String votes = (String) candidat.get("votes");
+
+                        String web = (String) candidat.get("web");
+
+                        String party = (String) candidat.get("party");
+
+                        candidats.set(Integer.parseInt(id) - 2,new Candidat(Integer.valueOf(id), firstname, secondname, thirdname, Integer.valueOf(votes), Double.valueOf(totalVote), descr, party, web, image));
+
+                        Log.d("Response", firstname + " " + image);
+
+                    }
+                    boxAdapter = new NewAdapter(General.this, candidats);
+
+                    lvMain.setAdapter(boxAdapter);
+
+
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
+            }
+        }, new Response.ErrorListener() {
+
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Log.d("Error.Response", "Error");
+            }
+        }
+        ) {
+            @Override
+            protected Map<String, String> getParams() {
+                Map<String, String> params = new HashMap<String, String>();
+                params.put("device_id", "100");
+                params.put("device_name", "Anton");
+
+                return params;
+            }
+        };
+
+        queue.add(jsObjRequest);
+
 
 
         lvMain.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -101,11 +186,7 @@ public class General extends AppCompatActivity {
 
             }
         });
-
-
     }
-
-
     @Override
     protected void onStop() {
         super.onStop();

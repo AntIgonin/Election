@@ -19,25 +19,25 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+import static com.example.anton.election.General.boxAdapter;
+import static com.example.anton.election.General.candidats;
 import static com.example.anton.election.General.textView;
 
 
 public class VolleyReq {
 
-    String url = "http://adlibtech.ru/elections/api/getcandidates.php";
-    ArrayList<Candidat> candidats = new ArrayList<Candidat>();
+
+
     Context context;
 
 
-    VolleyReq(ArrayList candidats,Context context){
-
-        this.candidats = candidats;
+    VolleyReq(Context context){
 
         this.context = context;
 
     }
-
-    public void ReqVolley(RequestQueue queue, final ListView lvMain) {
+    String url = "http://adlibtech.ru/elections/api/getcandidates.php";
+    public void UpdateVolley(RequestQueue queue, final ListView lvMain) {
 
         StringRequest jsObjRequest = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
 
@@ -51,43 +51,20 @@ public class VolleyReq {
 
                     JSONArray jsonArray = (JSONArray) object;
 
-                    JSONObject total = (JSONObject) jsonArray.get(8);
-
-                    String totalVote = (String) total.get("total");
-
-                    textView.setText(totalVote);
-
                     for (int i = 0; i < 8; i++) {
 
                         JSONObject candidat = (JSONObject) jsonArray.get(i);
 
-                        String id = (String) candidat.get("id");
-
-                        String firstname = (String) candidat.get("firstname");
-
-                        String secondname = (String) candidat.get("secondname");
-
-                        String thirdname = (String) candidat.get("thirdname");
-
-                        String image = (String) candidat.get("image");
-
-                        String descr = (String) candidat.get("description");
-
                         String votes = (String) candidat.get("votes");
 
-                        String web = (String) candidat.get("web");
+                        String id = (String) candidat.get("id");
 
-                        String party = (String) candidat.get("party");
+                        candidats.get(Integer.parseInt(id) - 2).votes = Integer.valueOf(votes);
 
-                        candidats.add(new Candidat(Integer.valueOf(id), firstname, secondname, thirdname, Integer.valueOf(votes), Double.valueOf(totalVote), descr, party, web, image));
-
-                        Log.d("Response", firstname + " " + image);
 
                     }
 
-                    NewAdapter boxAdapter = new NewAdapter(context, candidats);
-
-                    lvMain.setAdapter(boxAdapter);
+                    boxAdapter.notifyDataSetChanged();
 
                 } catch (ParseException e) {
                     e.printStackTrace();
@@ -112,7 +89,6 @@ public class VolleyReq {
         };
 
         queue.add(jsObjRequest);
-
 
     }
 

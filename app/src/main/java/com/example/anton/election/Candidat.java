@@ -25,6 +25,21 @@ public class Candidat implements Parcelable {
 
     }
 
+    Candidat(){
+
+        this.firstname = null;
+        this.secondname = null;
+        this.votes = 0;
+        this.totalVote = 0;
+        this.thirdname = null;
+        this.description = null;
+        this.party = null;
+        this.web = null;
+        this.image = null;
+        this.id = 0;
+
+    }
+
     @Override
     public int describeContents() {
         return 0;
