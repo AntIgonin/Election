@@ -111,7 +111,7 @@ public class NewAdapter extends BaseAdapter implements View.OnClickListener {
             }, 0, 0, ImageView.ScaleType.CENTER_CROP, null, new Response.ErrorListener() {
                 @Override
                 public void onErrorResponse(VolleyError volleyError) {
-                    Log.d("Response", "Не полетели!");
+                    Log.d("Response", "Не полетели! Candidats");
                 }
             });
 

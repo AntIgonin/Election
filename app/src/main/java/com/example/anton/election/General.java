@@ -2,6 +2,7 @@ package com.example.anton.election;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
@@ -12,11 +13,14 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.telephony.TelephonyManager;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.provider.Settings.Secure;
@@ -28,6 +32,9 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.ImageRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.example.anton.election.Banner.BannerConst;
+import com.example.anton.election.Banner.BannerInfo;
+import com.example.anton.election.Banner.BannerView;
 
 
 import org.json.simple.JSONArray;
@@ -43,6 +50,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+import android.view.ViewGroup.LayoutParams;
 import static com.example.anton.election.NewAdapter.choiseCandidat;
 import static java.security.AccessController.getContext;
 
@@ -60,10 +68,25 @@ public class General extends AppCompatActivity {
 
     int position = 0;
 
+
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.content_general);
+
+        LinearLayout linearLayout = (LinearLayout) findViewById(R.id.Liner);
+
+
+        BannerView bannerView = new BannerView(General.this,linearLayout);
+
+        bannerView.setLayoutParams(new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                LinearLayout.LayoutParams.MATCH_PARENT));
+
+        linearLayout.addView(bannerView);
+
 
         FileInputStream fin = null;
         try {
@@ -184,6 +207,8 @@ public class General extends AppCompatActivity {
 
                 startActivity(intent);
 
+
+
             }
         });
     }
@@ -205,6 +230,7 @@ public class General extends AppCompatActivity {
         }
 
     }
+
 
 
 }
