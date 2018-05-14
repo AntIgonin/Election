@@ -9,6 +9,7 @@ import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
 
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -29,15 +30,16 @@ public class VolleyReq {
 
 
     Context context;
-
+    RequestQueue requestQueue;
 
     VolleyReq(Context context){
 
         this.context = context;
-
+        requestQueue = Volley.newRequestQueue(context);
     }
     String url = "http://adlibtech.ru/elections/api/getcandidates.php";
-    public void UpdateVolley(RequestQueue queue, final ListView lvMain) {
+
+    public void UpdateVolley(final ListView lvMain) {
 
         StringRequest jsObjRequest = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
 
@@ -88,7 +90,7 @@ public class VolleyReq {
             }
         };
 
-        queue.add(jsObjRequest);
+        requestQueue.add(jsObjRequest);
 
     }
 

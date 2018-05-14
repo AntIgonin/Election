@@ -29,14 +29,13 @@ import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
+import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.ImageRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
-import com.example.anton.election.Banner.BannerConst;
-import com.example.anton.election.Banner.BannerInfo;
-import com.example.anton.election.Banner.BannerView;
 
 
+import org.json.JSONException;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -51,6 +50,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 import android.view.ViewGroup.LayoutParams;
+
+import static com.android.volley.VolleyLog.wtf;
 import static com.example.anton.election.NewAdapter.choiseCandidat;
 import static java.security.AccessController.getContext;
 
@@ -59,6 +60,7 @@ public class General extends AppCompatActivity {
     private static final String TAG = General.class.getSimpleName();
    static ArrayList<Candidat> candidats = new ArrayList<Candidat>(7);
     public static final String fileName = "candidat.txt";
+    String HOST_NAME = "http://adlibtech.ru";
 
     static ListView lvMain;
 
@@ -66,8 +68,7 @@ public class General extends AppCompatActivity {
 
     static NewAdapter boxAdapter;
 
-    int position = 0;
-
+    public static final String HOST = "http://adlibtech.ru/elections";
 
 
 
@@ -78,7 +79,7 @@ public class General extends AppCompatActivity {
 
         LinearLayout linearLayout = (LinearLayout) findViewById(R.id.Liner);
 
-
+        /*
         BannerView bannerView = new BannerView(General.this,linearLayout);
 
         bannerView.setLayoutParams(new LinearLayout.LayoutParams(
@@ -87,6 +88,10 @@ public class General extends AppCompatActivity {
 
         linearLayout.addView(bannerView);
 
+*/      for(int i = 0; i < 8 ;i++){
+            candidats.add(new Candidat());
+            wtf("Candidat","Add new");
+        }
 
         FileInputStream fin = null;
         try {
@@ -102,113 +107,19 @@ public class General extends AppCompatActivity {
             e.printStackTrace();
         }
 
-
         lvMain = (ListView) findViewById(R.id.lvMain);
-        final RequestQueue queue = Volley.newRequestQueue(General.this);
-        textView = (TextView) findViewById(R.id.textView2);
 
-        for (int i = 0; i < 8; i++){
-
-            candidats.add(new Candidat());
-
-        }
-
-
-        String url = "http://adlibtech.ru/elections/api/getcandidates.php";
-        StringRequest jsObjRequest = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
-
-            @Override
-            public void onResponse(String response) {
-
-                JSONParser jsonParser = new JSONParser();
-
-                try {
-                    Object object = jsonParser.parse(response);
-
-                    JSONArray jsonArray = (JSONArray) object;
-
-                    JSONObject total = (JSONObject) jsonArray.get(8);
-
-                    String totalVote = (String) total.get("total");
-
-                    textView.setText(totalVote);
-
-
-
-                    for (int i = 0; i < 8; i++) {
-
-                        JSONObject candidat = (JSONObject) jsonArray.get(i);
-
-                        String id = (String) candidat.get("id");
-
-                        String firstname = (String) candidat.get("firstname");
-
-                        String secondname = (String) candidat.get("secondname");
-
-                        String thirdname = (String) candidat.get("thirdname");
-
-                        String image = (String) candidat.get("image");
-
-                        String descr = (String) candidat.get("description");
-
-                        String votes = (String) candidat.get("votes");
-
-                        String web = (String) candidat.get("web");
-
-                        String party = (String) candidat.get("party");
-
-                        candidats.set(Integer.parseInt(id) - 2,new Candidat(Integer.valueOf(id), firstname, secondname, thirdname, Integer.valueOf(votes), Double.valueOf(totalVote), descr, party, web, image));
-
-                        Log.d("Response", firstname + " " + image);
-
-                    }
-                    boxAdapter = new NewAdapter(General.this, candidats);
-
-                    lvMain.setAdapter(boxAdapter);
-
-
-                } catch (ParseException e) {
-                    e.printStackTrace();
-                }
-            }
-        }, new Response.ErrorListener() {
-
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                Log.d("Error.Response", "Error");
-            }
-        }
-        ) {
-            @Override
-            protected Map<String, String> getParams() {
-                Map<String, String> params = new HashMap<String, String>();
-                params.put("device_id", "100");
-                params.put("device_name", "Anton");
-
-                return params;
-            }
-        };
-
-        queue.add(jsObjRequest);
-
-
+        work();
 
         lvMain.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View itemClicked, int position, long id) {
-
                 Intent intent = new Intent(General.this, InfoCandidat.class);
-
                 Bundle bundle = new Bundle();
                 bundle.putParcelableArrayList("candidate", candidats);
                 intent.putExtras(bundle);
-
                 intent.putExtra("id", position );
-
                 startActivity(intent);
-
-
-
             }
         });
     }
@@ -229,6 +140,109 @@ public class General extends AppCompatActivity {
             e.printStackTrace();
         }
 
+    }
+
+    private void work() {
+
+
+
+        String url = HOST + "/api/getcandidates.php";
+        RequestQueue queue = Volley.newRequestQueue(this);
+        StringRequest postRequest = new StringRequest(Request.Method.POST, url,
+                new Response.Listener<String>()
+                {
+                    @Override
+                    public void onResponse(String response) {
+                        // response
+                        Log.d("Lenght: ", String.valueOf(response.length()));
+                        Log.d("Response", response);
+
+                        jsonDidLoaded(response);
+                    }
+                },
+                new Response.ErrorListener()
+                {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        // error
+                        Log.d("Error.Response", error.toString());
+                    }
+                }
+        ) {
+            @Override
+            protected Map<String, String> getParams()
+            {
+                Map<String, String>  params = new HashMap<String, String>();
+                params.put("device_id", "TEST_ANDROID_ID");
+                params.put("device_name", "TEST_ANDROID_NAME");
+
+                return params;
+            }
+        };
+        queue.add(postRequest);
+    }
+
+    private void jsonDidLoaded(String response) {
+        System.out.println(response);
+
+        if (isJSONValid(response)) {
+            try {
+                org.json.JSONArray object = new org.json.JSONArray(response);
+                org.json.JSONObject totalVote = object.getJSONObject(8);
+                double total = Double.parseDouble((String) totalVote.get("total"));
+                TextView textView = (TextView) findViewById(R.id.textView2);
+                textView.setText((String) totalVote.get("total"));
+                for (int i = 0; i < object.length() - 1; i++) {
+                    org.json.JSONObject c = object.getJSONObject(i);
+                    loadImageWithUrl((String) c.get("image"));
+                    Log.d("Candidate: ", c.get("secondname").toString() + " " + c.get("firstname").toString());
+                    candidats.set(c.getInt("id") - 2,new Candidat(c,total));
+                }
+
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+            boxAdapter = new NewAdapter(General.this, candidats);
+            lvMain.setAdapter(boxAdapter);
+        }
+
+
+    }
+
+    private void loadImageWithUrl(String imageUrl) {
+        ImageLoader imageLoader = VolleySingleton.getInstance(this).getImageLoader();
+        imageUrl = HOST + "/upload_images/" + imageUrl;
+        //Log.d("MAIN", "imageUrl = " + imageUrl);
+        imageLoader.get(imageUrl, new ImageLoader.ImageListener() {
+
+            @Override
+            public void onResponse(ImageLoader.ImageContainer response, boolean isImmediate) {
+                if (response.getBitmap() !=null) {
+                    Log.d("Image loaded size: ", String.valueOf(response.getBitmap().getByteCount()));
+                }
+            }
+
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Log.d("Error image loading", error.toString());
+            }
+        });
+    }
+
+    public boolean isJSONValid(String test) {
+        try {
+            new org.json.JSONObject(test);
+        } catch (JSONException ex) {
+            // edited, to include @Arthur's comment
+            // e.g. in case JSONArray is valid as well...
+            try {
+                new org.json.JSONArray(test);
+            } catch (JSONException ex1) {
+                return false;
+            }
+        }
+        return true;
     }
 
 

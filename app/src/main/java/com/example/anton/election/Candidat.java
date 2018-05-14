@@ -3,24 +3,33 @@ package com.example.anton.election;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 public class Candidat implements Parcelable {
 
     int id,votes;
     double totalVote;
     String firstname,secondname,thirdname,party,description,web,image;
 
-    Candidat(int id, String firstname, String secondname, String thirdname,int votes,double totalVote, String description, String party, String web,String image){
+    Candidat(JSONObject jsonObject,double totalVote){
 
-        this.firstname = firstname;
-        this.secondname = secondname;
-        this.votes = votes;
-        this.totalVote = totalVote;
-        this.thirdname = thirdname;
-        this.description = description;
-        this.party = party;
-        this.web = web;
-        this.image = image;
-        this.id = id;
+
+        try {
+            this.firstname = (String) jsonObject.get("firstname");
+            this.secondname =(String) jsonObject.get("secondname");
+            this.votes = Integer.parseInt((String) jsonObject.get("votes"));
+            this.totalVote = totalVote;
+            this.thirdname = (String) jsonObject.get("thirdname");
+            this.description = (String) jsonObject.get("description");
+            this.party = (String) jsonObject.get("party");
+            this.web = (String) jsonObject.get("web");
+            this.image = (String) jsonObject.get("image");
+            this.id = Integer.parseInt((String) jsonObject.get("id"));
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
 
 
     }

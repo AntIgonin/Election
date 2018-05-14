@@ -15,6 +15,7 @@ import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
+import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.ImageRequest;
 import com.android.volley.toolbox.Volley;
 import com.android.volley.toolbox.StringRequest;
@@ -40,7 +41,7 @@ public class NewAdapter extends BaseAdapter implements View.OnClickListener {
 
     RequestQueue queue;
 
-    final String urlImage = "http://adlibtech.ru/elections/upload_images/";
+    String urlImage = "http://adlibtech.ru/elections/upload_images/";
 
 
     NewAdapter(Context context, ArrayList<Candidat> products) {
@@ -49,6 +50,7 @@ public class NewAdapter extends BaseAdapter implements View.OnClickListener {
         lInflater = (LayoutInflater) ctx
                 .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         queue = Volley.newRequestQueue(ctx);
+
     }
 
 
@@ -97,25 +99,24 @@ public class NewAdapter extends BaseAdapter implements View.OnClickListener {
 
         ((TextView) view.findViewById(R.id.textView6)).setText(String.valueOf(((c.totalVote)/100)*Double.valueOf(c.votes))+" % ");
 
+        String url = urlImage + c.image;
 
 
-            ImageRequest imageRequest = new ImageRequest(urlImage + c.image, new Response.Listener<Bitmap>() {
-                @Override
-                public void onResponse(Bitmap bitmap) {
-
+        ImageLoader imageLoader = VolleySingleton.getInstance(ctx).getImageLoader();
+        imageLoader.get(url, new ImageLoader.ImageListener() {
+            @Override
+            public void onErrorResponse(VolleyError volleyError) {
+            }
+            public void onResponse(ImageLoader.ImageContainer response, boolean arg1) {
+                if (response.getBitmap() != null) {
                     if (c.image == textView2.getText()) {
-                        ((ImageView) finalView.findViewById(R.id.imageView3)).setImageBitmap(bitmap);
+                        ((ImageView) finalView.findViewById(R.id.imageView3)).setImageBitmap(response.getBitmap());
                     }
-
                 }
-            }, 0, 0, ImageView.ScaleType.CENTER_CROP, null, new Response.ErrorListener() {
-                @Override
-                public void onErrorResponse(VolleyError volleyError) {
-                    Log.d("Response", "Не полетели! Candidats");
-                }
-            });
+            }
+        });
 
-            queue.add(imageRequest);
+
 
         final ImageView imageView = (ImageView) view.findViewById(R.id.imageView4);
         final ImageButton imageButton = (ImageButton) view.findViewById(R.id.imageButton);
@@ -128,7 +129,7 @@ public class NewAdapter extends BaseAdapter implements View.OnClickListener {
             else {imageView.setVisibility(View.GONE);}
         }
 
-        Log.d("Choise",choiseCandidat);
+//        Log.d("Choise",choiseCandidat);
 
 
 
@@ -159,7 +160,7 @@ public class NewAdapter extends BaseAdapter implements View.OnClickListener {
                             @Override
                             public void onResponse(String s) {
 
-                                volleyReq.UpdateVolley(queue,lvMain);
+                                volleyReq.UpdateVolley(lvMain);
                             }
                         },
                         new Response.ErrorListener() {
@@ -172,8 +173,8 @@ public class NewAdapter extends BaseAdapter implements View.OnClickListener {
                     @Override
                     protected Map<String, String> getParams() {
                         Map<String, String> params = new HashMap<String, String>();
-                        params.put("device_id", "100");
-                        params.put("device_name", "Anton");
+                        params.put("device_id", "TEST_ANDROID_ID");
+                        params.put("device_name", "TEST_ANDROID_NAME");
                         params.put("candidate_id", String.valueOf(idElections[0]));
                         params.put("last_id", String.valueOf(idElections[1]));
 
@@ -192,7 +193,6 @@ public class NewAdapter extends BaseAdapter implements View.OnClickListener {
         return view;
 
 }
-
 
     Candidat getCandidat(int position) {
         return  ((Candidat) getItem(position));
