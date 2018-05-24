@@ -5,4 +5,5 @@
     <string name="title_activity_info_candidat">InfoCandidat</string>
     <string name="title_activity_main">MainActivity</string>
     <string name="title_activity_banner_view">BannerView</string>
+    <string name="title_activity_web_activity">web</string>
 </resources>

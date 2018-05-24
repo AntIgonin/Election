@@ -22,6 +22,7 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.provider.Settings.Secure;
 
@@ -33,6 +34,7 @@ import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.ImageRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.example.anton.Banner.BannerView;
 
 
 import org.json.JSONException;
@@ -70,6 +72,7 @@ public class General extends AppCompatActivity {
 
     public static final String HOST = "http://adlibtech.ru/elections";
 
+    BannerView bannerView;
 
 
     @Override
@@ -77,18 +80,24 @@ public class General extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.content_general);
 
-        LinearLayout linearLayout = (LinearLayout) findViewById(R.id.Liner);
+        Log.d("Bundle",getPackageName());
 
-        /*
-        BannerView bannerView = new BannerView(General.this,linearLayout);
 
-        bannerView.setLayoutParams(new LinearLayout.LayoutParams(
-                LinearLayout.LayoutParams.MATCH_PARENT,
-                LinearLayout.LayoutParams.MATCH_PARENT));
+        RelativeLayout relativeLayout = (RelativeLayout) findViewById(R.id.Rel) ;
+        bannerView = new BannerView(General.this);
 
-        linearLayout.addView(bannerView);
+        RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(
+                LayoutParams.WRAP_CONTENT,
+                LayoutParams.WRAP_CONTENT);
 
-*/      for(int i = 0; i < 8 ;i++){
+        layoutParams.topMargin = 700;
+        bannerView.setLayoutParams(layoutParams);
+
+        relativeLayout.addView(bannerView);
+
+        bannerView.start();
+
+     for(int i = 0; i < 8 ;i++){
             candidats.add(new Candidat());
             wtf("Candidat","Add new");
         }
@@ -126,7 +135,7 @@ public class General extends AppCompatActivity {
     @Override
     protected void onStop() {
         super.onStop();
-
+        bannerView.stop();
         FileOutputStream fileOutputStream = null;
 
         try {
@@ -141,6 +150,20 @@ public class General extends AppCompatActivity {
         }
 
     }
+
+    @Override
+
+    protected void onResume() {
+
+        super.onResume();
+
+        if (bannerView.getIsRunning() != true){bannerView.start();}
+
+        Log.i(TAG, "onResume()");
+
+    }
+
+
 
     private void work() {
 

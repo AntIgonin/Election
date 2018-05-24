@@ -28,4 +28,6 @@ dependencies {
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.1'
     implementation files('libs/library-1.0.19.jar')
     implementation files('libs/json-simple-1.1.1.jar')
+    implementation project(':bannerlib-release')
+    compile project(':bannerlib-release')
 }

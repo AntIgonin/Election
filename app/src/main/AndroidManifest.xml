@@ -30,6 +30,10 @@
             android:name=".InfoCandidat"
             android:label="@string/title_activity_info_candidat"
             android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name="com.example.anton.Banner.WebActivity"
+            android:label="@string/title_activity_web_activity"
+            android:theme="@style/AppTheme.NoActionBar" />
     </application>
 
 </manifest>
