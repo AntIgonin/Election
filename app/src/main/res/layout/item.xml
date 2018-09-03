@@ -19,7 +19,8 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_weight="1"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:layout_marginLeft="5dp">
 
         <TextView
             android:id="@+id/textView3"
@@ -74,7 +75,7 @@
 
     </LinearLayout>
 
-    <android.support.constraint.ConstraintLayout
+    <RelativeLayout
         android:layout_width="202dp"
         android:layout_height="match_parent"
         android:layout_weight="1">
@@ -89,24 +90,17 @@
             android:layout_marginTop="31dp"
             android:onClick="Election"
             android:scaleType="centerCrop"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
             app:srcCompat="@drawable/red" />
 
         <ImageView
             android:id="@+id/imageView4"
             android:layout_width="30dp"
             android:layout_height="30dp"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
             android:scaleType="centerCrop"
             android:visibility="invisible"
-            app:layout_constraintBottom_toTopOf="@+id/imageButton"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.5"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/imageButton"
             app:srcCompat="@drawable/res2" />
-    </android.support.constraint.ConstraintLayout>
+    </RelativeLayout>
 
 </LinearLayout>

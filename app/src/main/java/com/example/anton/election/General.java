@@ -85,7 +85,7 @@ public class General extends AppCompatActivity {
 
         RelativeLayout relativeLayout = (RelativeLayout) findViewById(R.id.Rel) ;
         bannerView = new BannerView(General.this);
-
+/*
         RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(
                 LayoutParams.WRAP_CONTENT,
                 LayoutParams.WRAP_CONTENT);
@@ -94,14 +94,8 @@ public class General extends AppCompatActivity {
         bannerView.setLayoutParams(layoutParams);
 
         relativeLayout.addView(bannerView);
-
         bannerView.start();
-
-     for(int i = 0; i < 8 ;i++){
-            candidats.add(new Candidat());
-            wtf("Candidat","Add new");
-        }
-
+*/
         FileInputStream fin = null;
         try {
             fin = openFileInput(fileName);
@@ -118,7 +112,7 @@ public class General extends AppCompatActivity {
 
         lvMain = (ListView) findViewById(R.id.lvMain);
 
-        work();
+
 
         lvMain.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -135,7 +129,8 @@ public class General extends AppCompatActivity {
     @Override
     protected void onStop() {
         super.onStop();
-        bannerView.stop();
+       // bannerView.stop();
+
         FileOutputStream fileOutputStream = null;
 
         try {
@@ -154,10 +149,18 @@ public class General extends AppCompatActivity {
     @Override
 
     protected void onResume() {
-
         super.onResume();
 
-        if (bannerView.getIsRunning() != true){bannerView.start();}
+        if(candidats != null){
+            candidats.clear();
+        }
+
+        for(int i = 0; i < 8 ;i++){
+            candidats.add(new Candidat());
+        }
+        work();
+
+       // if (bannerView.getIsRunning() != true){bannerView.start();}
 
         Log.i(TAG, "onResume()");
 
@@ -166,9 +169,6 @@ public class General extends AppCompatActivity {
 
 
     private void work() {
-
-
-
         String url = HOST + "/api/getcandidates.php";
         RequestQueue queue = Volley.newRequestQueue(this);
         StringRequest postRequest = new StringRequest(Request.Method.POST, url,

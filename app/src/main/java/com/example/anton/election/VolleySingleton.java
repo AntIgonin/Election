@@ -8,9 +8,6 @@ import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.Volley;
 
-/**
- * Created by alexsid on 30.11.15.
- */
 public class VolleySingleton {
     private static Context context;
     private static VolleySingleton mInstance = null;

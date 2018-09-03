@@ -10,6 +10,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -44,53 +45,60 @@ public class InfoCandidat extends AppCompatActivity {
        final TextView thirdText = (TextView) findViewById(R.id.textView11);
        final TextView email = (TextView) findViewById(R.id.textView13);
        final TextView partyText = (TextView) findViewById(R.id.textView12);
+             Button button = (Button) findViewById(R.id.BackBtn);
+             button.setOnClickListener(new View.OnClickListener() {
+                 @Override
+                 public void onClick(View v) {
+                     startActivity(new Intent(InfoCandidat.this, General.class));
+                 }
+             });
 
 
        final TextView descrText = (TextView) findViewById(R.id.textView15);
 
-    if(filelist != null) {
+       if(filelist != null) {
 
-        String secondname = (String) filelist.get(id).secondname;
+            String secondname = (String) filelist.get(id).secondname;
 
-        String descr = (String) filelist.get(id).description;
+            String descr = (String) filelist.get(id).description;
 
-        String firstname = (String)  filelist.get(id).firstname;
+            String firstname = (String)  filelist.get(id).firstname;
 
-        String thirdname = (String) filelist.get(id).thirdname;
+            String thirdname = (String) filelist.get(id).thirdname;
 
-        String web = (String)  filelist.get(id).web;
+            String web = (String)  filelist.get(id).web;
 
-        String party = (String)  filelist.get(id).party;
+            String party = (String)  filelist.get(id).party;
 
-        final String image = (String)  filelist.get(id).image;
+            final String image = (String)  filelist.get(id).image;
 
-        ImageRequest imageRequest = new ImageRequest(urlImage + image , new Response.Listener<Bitmap>() {
-            @Override
-            public void onResponse(Bitmap bitmap) {
+            ImageRequest imageRequest = new ImageRequest(urlImage + image , new Response.Listener<Bitmap>() {
+                @Override
+                public void onResponse(Bitmap bitmap) {
 
-                ImageView imageView = (ImageView) findViewById(R.id.imageView5);
-                imageView.setImageBitmap(bitmap);
+                    ImageView imageView = (ImageView) findViewById(R.id.imageView5);
+                    imageView.setImageBitmap(bitmap);
 
-            }
-        }, 0, 0, ImageView.ScaleType.CENTER_CROP, null, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError volleyError) {
-                Log.d("Response", "Не полетели!");
-            }
-        });
-        queue.add(imageRequest);
+                }
+            }, 0, 0, ImageView.ScaleType.CENTER_CROP, null, new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError volleyError) {
+                    Log.d("Response", "Не полетели!");
+                }
+            });
+            queue.add(imageRequest);
 
-        secondText.setText(secondname);
+            secondText.setText(secondname);
 
-        firstText.setText(firstname + " ");
+            firstText.setText(firstname + " ");
 
-        thirdText.setText("      " + thirdname);
+            thirdText.setText("      " + thirdname);
 
-        email.setText(web);
+            email.setText(web);
 
-        descrText.setText(descr);
+            descrText.setText(descr);
 
-        partyText.setText("Партия : "+party);
+            partyText.setText("Партия : "+party);
 
     }
 

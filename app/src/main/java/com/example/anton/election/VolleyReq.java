@@ -63,7 +63,6 @@ public class VolleyReq {
 
                         candidats.get(Integer.parseInt(id) - 2).votes = Integer.valueOf(votes);
 
-
                     }
 
                     boxAdapter.notifyDataSetChanged();
